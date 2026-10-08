@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance Tracker</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: black;
+        }
+
+        .page-title {
+            text-align: center;
+            margin: 30px 0 20px;
+        }
+
+        .page-title h1 {
+            margin: 0 0 5px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 38px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: rgba(73, 3, 3, 0.792);
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .image-box {
+            flex: 1;
+            text-align: center;
+        }
+
+        .image-box img {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .form-box {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .form-box h2 {
+            margin: 0 0 10px;
+            text-align: center;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            font-size: 28px;
+            color: rgba(73, 3, 3, 0.792);
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 420px;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 8px 15px;
+            font-weight: bold;
+            color: #06b6e7;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            background-color: aliceblue;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Error message */
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 3px;
+        }
+
+        /* Valid input */
+        .valid {
+            border: 2px solid green;
+        }
+
+        /* Invalid input */
+        .invalid {
+            border: 2px solid red;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            background-color: #ebee92;
+            margin-bottom: 5px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-title">
+        <h1>Attendance Tracker</h1>
+    </div>
+
+    <div class="container">
+
+        <!-- LEFT SIDE IMAGE -->
+        <div class="image-box">
+            <img src="attendance.png" alt="student image">
+        </div>
+
+        <!-- RIGHT SIDE FORM -->
+        <div class="form-box">
+
+            <h2>Attendance Register</h2>
+
+            <form id="attendanceForm">
+
+                <!-- Student Name -->
+                <label for="studentName">Student Name:</label>
+
+                <input type="text"
+                       id="studentName"
+                       placeholder="Student Name">
+
+                <div id="nameError" class="error"></div>
+
+
+                <!-- Date -->
+                <label for="date">Date:</label>
+
+                <input type="text"
+                       id="date"
+                       placeholder="DD/MM/YYYY">
+
+                <div id="dateError" class="error"></div>
+
+
+                <!-- Register Number -->
+                <label for="Register_Number">Register Number:</label>
+
+                <input type="text"
+                       id="Register_Number"
+                       placeholder="Register Number">
+
+                <div id="registerError" class="error"></div>
+
+
+                <!-- Status -->
+                <label for="status">Status:</label>
+
+                <input type="text"
+                       id="status"
+                       placeholder="Present / Absent">
+
+                <div id="statusError" class="error"></div>
+
+
+                <button type="submit">Add Attendance</button>
+
+            </form>
+
+            <ul id="attendanceList"></ul>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        const form = document.getElementById("attendanceForm");
+
+        const list = document.getElementById("attendanceList");
+
+        const studentNameInput =
+            document.getElementById("studentName");
+
+        const dateInput =
+            document.getElementById("date");
+
+        const registerNumberInput =
+            document.getElementById("Register_Number");
+
+        const statusInput =
+            document.getElementById("status");
+
+
+        form.addEventListener("submit", function (e) {
+
+            e.preventDefault();
+
+            let valid = true;
+
+
+            // Clear previous errors
+            document.getElementById("nameError").textContent = "";
+            document.getElementById("dateError").textContent = "";
+            document.getElementById("registerError").textContent = "";
+            document.getElementById("statusError").textContent = "";
+
+            studentNameInput.classList.remove("invalid", "valid");
+            dateInput.classList.remove("invalid", "valid");
+            registerNumberInput.classList.remove("invalid", "valid");
+            statusInput.classList.remove("invalid", "valid");
+
+
+            // =========================
+            // STUDENT NAME VALIDATION
+            // =========================
+
+            const studentName = studentNameInput.value.trim();
+
+            // Only letters and spaces
+            const namePattern = /^[A-Za-z ]+$/;
+
+            if (studentName === "") {
+
+                document.getElementById("nameError").textContent =
+                    "Error: Student name is required.";
+
+                studentNameInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else if (!namePattern.test(studentName)) {
+
+                document.getElementById("nameError").textContent =
+                    "Invalid: Name must contain letters only.";
+
+                studentNameInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else {
+
+                studentNameInput.classList.add("valid");
+            }
+
+
+            // =========================
+            // DATE VALIDATION
+            // =========================
+
+            const date = dateInput.value.trim();
+
+            // DD/MM/YYYY
+            const datePattern =
+                /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/;
+
+            if (date === "") {
+
+                document.getElementById("dateError").textContent =
+                    "Error: Date is required.";
+
+                dateInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else if (!datePattern.test(date)) {
+
+                document.getElementById("dateError").textContent =
+                    "Invalid: Enter date as DD/MM/YYYY.";
+
+                dateInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else {
+
+                dateInput.classList.add("valid");
+            }
+
+
+            // =========================
+            // REGISTER NUMBER VALIDATION
+            // =========================
+
+            const registerNumber =
+                registerNumberInput.value.trim();
+
+            // Numbers only
+            const numberPattern = /^[0-9]+$/;
+
+            if (registerNumber === "") {
+
+                document.getElementById("registerError").textContent =
+                    "Error: Register number is required.";
+
+                registerNumberInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else if (!numberPattern.test(registerNumber)) {
+
+                document.getElementById("registerError").textContent =
+                    "Invalid: Register number must contain numbers only.";
+
+                registerNumberInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else {
+
+                registerNumberInput.classList.add("valid");
+            }
+
+
+            // =========================
+            // STATUS VALIDATION
+            // =========================
+
+            const status =
+                statusInput.value.trim().toLowerCase();
+
+            if (status === "") {
+
+                document.getElementById("statusError").textContent =
+                    "Error: Status is required.";
+
+                statusInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else if (status !== "present" && status !== "absent") {
+
+                document.getElementById("statusError").textContent =
+                    "Invalid: Enter only Present or Absent.";
+
+                statusInput.classList.add("invalid");
+
+                valid = false;
+
+            }
+            else {
+
+                statusInput.classList.add("valid");
+            }
+
+
+            // =========================
+            // ADD ATTENDANCE
+            // =========================
+
+            if (valid) {
+
+                const li = document.createElement("li");
+
+                li.textContent =
+                    `${studentName} (${registerNumber}) - ${date}: ${status}`;
+
+                list.appendChild(li);
+
+                alert("Attendance added successfully!");
+
+                form.reset();
+
+                studentNameInput.classList.remove("valid");
+                dateInput.classList.remove("valid");
+                registerNumberInput.classList.remove("valid");
+                statusInput.classList.remove("valid");
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>
